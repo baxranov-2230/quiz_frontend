@@ -5,20 +5,20 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import { GetAllFaculty, DeleteFaculty } from "../../Api/FacultyApi.jsx";
+import { DeleteDepartment, GetAllDepartment } from "../../Api/DepartmentApi";
 
-function ListFaculty() {
+function ListDepartment() {
   const [isModalOpen, setIsModalOpen] = useState(null);
   const { isError, isSuccess, isLoading, data, error, refetch } = useQuery({
-    queryKey: ["list-faculty"],
-    queryFn: GetAllFaculty,
+    queryKey: ["list-department"],
+    queryFn: GetAllDepartment,
   });
 
-  const facultyMutation = useMutation({
-    mutationKey: ["faculty-delete"],
-    mutationFn: DeleteFaculty,
+  const departmentMutation = useMutation({
+    mutationKey: ["department-delete"],
+    mutationFn: DeleteDepartment,
     onSuccess: (data) => {
-      toast.success(data.message || "Fakultet muvaffaqiyatli o'chirildi");
+      toast.success(data.message || "Department muvaffaqiyatli o'chirildi");
       setIsModalOpen(null);
     },
     onError: (error) => {
@@ -26,13 +26,13 @@ function ListFaculty() {
     },
   });
 
-  const handleDeleteClick = (facultyId) => {
-    setIsModalOpen(facultyId); // Modalni ochish
+  const handleDeleteClick = (departmentId) => {
+    setIsModalOpen(departmentId); // Modalni ochish
   };
 
-  const deleteHandler = async (facultyId) => {
-    facultyMutation
-      .mutateAsync(facultyId)
+  const deleteHandler = async (departmentId) => {
+    departmentMutation
+      .mutateAsync(departmentId)
       .then(() => {
         refetch();
       })
@@ -44,7 +44,7 @@ function ListFaculty() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800">Fakultetlar ro'yxati</h2>
+      <h2 className="text-2xl font-bold text-gray-800">Kafedralar ro'yxati</h2>
 
       <div className="bg-white rounded-lg shadow">
         <div className="p-4">
@@ -53,23 +53,25 @@ function ListFaculty() {
               <tr className="text-left bg-gray-50">
                 <th className="p-3 text-gray-600">N</th>
                 <th className="p-3 text-gray-600">Fakultet nomi</th>
+                <th className="p-3 text-gray-600">Kafedra nomi</th>
                 <th className="p-3 text-gray-600 flex justify-center ">
                   Action
                 </th>
               </tr>
             </thead>
             <tbody>
-              {data?.map((faculty, index) => {
+              {data?.map((kafedra, index) => {
                 return (
-                  <tr className="border-t" key={faculty.id}>
+                  <tr className="border-t" key={kafedra?.id}>
                     <td className="p-3 ">{index + 1}</td>
-                    <td className="p-3 ">{faculty?.name}</td>
+                    <td className="p-3 ">{kafedra?.faculty}</td>
+                    <td className="p-3 ">{kafedra?.name}</td>
 
                     <td className="p-3">
                       <div className="flex justify-center">
                         <Link
                           className=" flex items-center justify-start   pr-8"
-                          to={`/update-faculty/${faculty?.id}`}
+                          // to={`/update-faculty/${faculty?.id}`}
                         >
                           <button>
                             <FaRegEdit className="text-2xl text-[#3697A5]" />
@@ -77,12 +79,11 @@ function ListFaculty() {
                         </Link>
                         <button
                           className="flex items-center justify-start  "
-                          // onClick={() => deleteHandler(faculty?.id)}
-                          onClick={() => handleDeleteClick(faculty?.id)}
+                          onClick={() => handleDeleteClick(kafedra?.id)}
                         >
                           <MdDelete className="text-2xl text-red-600" />
                         </button>
-                        {isModalOpen === faculty?.id && (
+                        {isModalOpen === kafedra?.id && (
                           <div className="fixed inset-0 flex items-center justify-center bg-gray-500/50">
                             <div className="bg-white p-6 rounded-lg shadow-lg">
                               <h2 className="text-lg font-semibold mb-4">
@@ -90,7 +91,7 @@ function ListFaculty() {
                               </h2>
                               <p className="mb-6">
                                 <span className="text-red-600">
-                                  {faculty?.name || "Bu element"}
+                                  {kafedra?.name || "Bu element"}
                                 </span>{" "}
                                 ni o‘chirishni tasdiqlaysizmi?
                               </p>
@@ -103,7 +104,7 @@ function ListFaculty() {
                                 </button>
                                 <button
                                   className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                                  onClick={() => deleteHandler(faculty?.id)}
+                                  onClick={() => deleteHandler(kafedra?.id)}
                                 >
                                   O‘chirish
                                 </button>
@@ -124,4 +125,4 @@ function ListFaculty() {
   );
 }
 
-export default ListFaculty;
+export default ListDepartment;

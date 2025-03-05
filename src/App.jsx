@@ -1,36 +1,37 @@
 import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { Menu, Globe2, Bell } from "lucide-react";
 import HemisLogo from "./components/HemisLogo";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import StudyPlan from "./pages/StudyPlan";
-import Schedule from "./pages/Schedule";
-import Groups from "./pages/Groups";
-import Subjects from "./pages/Subjects";
-import Controls from "./pages/Controls";
-import RatingBook from "./pages/RatingBook";
-import Attendance from "./pages/Attendance";
-import Applications from "./pages/Applications";
-import Records from "./pages/Records";
-import Contracts from "./pages/Contracts";
-import Payments from "./pages/Payments";
-import Scholarship from "./pages/Scholarship";
-import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
 
+import CreateFaculty from "./pages/Faculty/CreateFaculty.jsx";
+import ListFaculty from "./pages/Faculty/ListFaculty.jsx";
+import UpdateFaculty from "./pages/Faculty/UpdateFaculty.jsx";
+import CreateDepartment from "./pages/Department/CreateDepartment.jsx";
+import ListDepartment from "./pages/Department/ListDepartment.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
+function ProtectedRoute({ children }) {
+  const token = JSON.parse(localStorage.getItem("token"));
+  const location = useLocation();
+
+  if (!token) {
+    // Agar token mavjud bo'lmasa, login sahifasiga yo'naltirish
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
+}
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
+  const location = useLocation(); // Get current route location
+  const isLoginPage = location.pathname === "/login";
+  const token = JSON.parse(localStorage.getItem("token"));
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-100 flex flex-col">
-        {/* Header */}
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      {/* Header */}
+      {!isLoginPage && (
         <header className="bg-[#2557A7] text-white fixed w-full z-10">
           <div className="px-4">
             <div className="flex items-center justify-between h-16">
@@ -57,36 +58,84 @@ function App() {
             </div>
           </div>
         </header>
+      )}
 
-        <div className="flex pt-16">
-          <Sidebar isOpen={isSidebarOpen} />
+      <div className={`flex ${!isLoginPage ? "pt-16" : ""}`}>
+        {/* Show sidebar only when not on login page */}
+        {!isLoginPage && <Sidebar isOpen={isSidebarOpen} />}
 
-          <main
-            className={`flex-1 p-6 transition-all duration-300 ${
-              isSidebarOpen ? "ml-64" : "ml-20"
-            }`}
-          >
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/study-plan" element={<StudyPlan />} />
-              <Route path="/schedule" element={<Schedule />} />
-              <Route path="/groups" element={<Groups />} />
-              <Route path="/subjects" element={<Subjects />} />
-              <Route path="/controls" element={<Controls />} />
-              <Route path="/rating-book" element={<RatingBook />} />
-              <Route path="/attendance" element={<Attendance />} />
-              <Route path="/applications" element={<Applications />} />
-              <Route path="/records" element={<Records />} />
-              <Route path="/contracts" element={<Contracts />} />
-              <Route path="/payments" element={<Payments />} />
-              <Route path="/scholarship" element={<Scholarship />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/settings" element={<Settings />} />
-            </Routes>
-          </main>
-        </div>
+        <main
+          className={`flex-1 p-6 transition-all duration-300 ${
+            !isLoginPage && isSidebarOpen
+              ? "ml-64"
+              : !isLoginPage
+              ? "ml-20"
+              : ""
+          }`}
+        >
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/study-plan"
+              element={
+                <ProtectedRoute>
+                  <StudyPlan />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/create-faculty"
+              element={
+                <ProtectedRoute>
+                  <CreateFaculty />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/list-faculty"
+              element={
+                <ProtectedRoute>
+                  <ListFaculty />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/update-faculty/:facultyId"
+              element={
+                <ProtectedRoute>
+                  <UpdateFaculty />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/create-department"
+              element={
+                <ProtectedRoute>
+                  <CreateDepartment />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/list-department"
+              element={
+                <ProtectedRoute>
+                  <ListDepartment />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </main>
       </div>
-    </Router>
+    </div>
   );
 }
 

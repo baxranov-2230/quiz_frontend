@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
 import {useMutation} from "@tanstack/react-query";
-import {CreateFacultyApi} from "../Api/FacultyApi.jsx";
+import {CreateFacultyApi} from "../../Api/FacultyApi.jsx";
 
 function CreateFaculty() {
     const navigate = useNavigate();
