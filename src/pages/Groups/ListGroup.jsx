@@ -5,20 +5,20 @@ import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import { DeleteDepartment, GetAllDepartment } from "../../Api/DepartmentApi";
+import { DeleteGroup, GetAllGroup } from "../../Api/GroupApi";
 
-function ListDepartment() {
+function ListGroup() {
   const [isModalOpen, setIsModalOpen] = useState(null);
   const { isError, isSuccess, isLoading, data, error, refetch } = useQuery({
-    queryKey: ["list-department"],
-    queryFn: GetAllDepartment,
+    queryKey: ["list-group"],
+    queryFn: GetAllGroup,
   });
 
-  const departmentMutation = useMutation({
-    mutationKey: ["department-delete"],
-    mutationFn: DeleteDepartment,
+  const groupMutation = useMutation({
+    mutationKey: ["group-delete"],
+    mutationFn: DeleteGroup,
     onSuccess: (data) => {
-      toast.success(data.message || "Department muvaffaqiyatli o'chirildi");
+      toast.success(data.message || "Group muvaffaqiyatli o'chirildi");
       setIsModalOpen(null);
     },
     onError: (error) => {
@@ -26,12 +26,12 @@ function ListDepartment() {
     },
   });
 
-  const handleDeleteClick = (departmentId) => {
-    setIsModalOpen(departmentId); // Modalni ochish
+  const handleDeleteClick = (groupId) => {
+    setIsModalOpen(groupId); // Modalni ochish
   };
 
   const deleteHandler = async (departmentId) => {
-    departmentMutation
+    groupMutation
       .mutateAsync(departmentId)
       .then(() => {
         refetch();
@@ -53,25 +53,25 @@ function ListDepartment() {
               <tr className="text-left bg-gray-50">
                 <th className="p-3 text-gray-600">N</th>
                 <th className="p-3 text-gray-600">Fakultet nomi</th>
-                <th className="p-3 text-gray-600">Kafedra nomi</th>
+                <th className="p-3 text-gray-600">Guruh nomi </th>
                 <th className="p-3 text-gray-600 flex justify-center ">
                   Action
                 </th>
               </tr>
             </thead>
             <tbody>
-              {data?.map((kafedra, index) => {
+              {data?.map((group, index) => {
                 return (
-                  <tr className="border-t" key={kafedra?.id}>
+                  <tr className="border-t" key={group?.id}>
                     <td className="p-3 ">{index + 1}</td>
-                    <td className="p-3 ">{kafedra?.faculty}</td>
-                    <td className="p-3 ">{kafedra?.name}</td>
+                    <td className="p-3 ">{group?.faculty_id}</td>
+                    <td className="p-3 ">{group?.name}</td>
 
                     <td className="p-3">
                       <div className="flex justify-center">
                         <Link
                           className=" flex items-center justify-start   pr-8"
-                          to={`/update-department/${kafedra?.id}`}
+                          to={`/update-group/${group?.id}`}
                         >
                           <button>
                             <FaRegEdit className="text-2xl text-[#3697A5]" />
@@ -79,11 +79,11 @@ function ListDepartment() {
                         </Link>
                         <button
                           className="flex items-center justify-start  "
-                          onClick={() => handleDeleteClick(kafedra?.id)}
+                          onClick={() => handleDeleteClick(group?.id)}
                         >
                           <MdDelete className="text-2xl text-red-600" />
                         </button>
-                        {isModalOpen === kafedra?.id && (
+                        {isModalOpen === group?.id && (
                           <div className="fixed inset-0 flex items-center justify-center bg-gray-500/50">
                             <div className="bg-white p-6 rounded-lg shadow-lg">
                               <h2 className="text-lg font-semibold mb-4">
@@ -91,7 +91,7 @@ function ListDepartment() {
                               </h2>
                               <p className="mb-6">
                                 <span className="text-red-600">
-                                  {kafedra?.name || "Bu element"}
+                                  {group?.name || "Bu element"}
                                 </span>{" "}
                                 ni o‘chirishni tasdiqlaysizmi?
                               </p>
@@ -104,7 +104,7 @@ function ListDepartment() {
                                 </button>
                                 <button
                                   className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                                  onClick={() => deleteHandler(kafedra?.id)}
+                                  onClick={() => deleteHandler(group?.id)}
                                 >
                                   O‘chirish
                                 </button>
@@ -125,4 +125,4 @@ function ListDepartment() {
   );
 }
 
-export default ListDepartment;
+export default ListGroup;

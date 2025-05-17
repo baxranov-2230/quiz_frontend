@@ -1,19 +1,36 @@
 import React, { useState } from "react";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
-import { Menu, Globe2, Bell } from "lucide-react";
+import {
+  Routes,
+  Route,
+  useLocation,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
+import { Menu as MenuIcon, Bell } from "lucide-react";
 import HemisLogo from "./components/HemisLogo";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import StudyPlan from "./pages/StudyPlan";
-
 import CreateFaculty from "./pages/Faculty/CreateFaculty.jsx";
 import ListFaculty from "./pages/Faculty/ListFaculty.jsx";
 import UpdateFaculty from "./pages/Faculty/UpdateFaculty.jsx";
 import CreateDepartment from "./pages/Department/CreateDepartment.jsx";
+import UpdateDepartment from "./pages/Department/UpdateDepartment.jsx";
 import ListDepartment from "./pages/Department/ListDepartment.jsx";
+import CreateGroup from "./pages/Groups/CreateGroup.jsx";
+import UpdateGroup from "./pages/Groups/UpdateGroup.jsx";
+import ListGroup from "./pages/Groups/ListGroup.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
+import { Toaster } from "react-hot-toast";
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Fade from "@mui/material/Fade";
+
+import { logout } from "./Api/LoginApi.jsx";
 function ProtectedRoute({ children }) {
   const token = JSON.parse(localStorage.getItem("token"));
+
   const location = useLocation();
 
   if (!token) {
@@ -24,10 +41,23 @@ function ProtectedRoute({ children }) {
   return children;
 }
 function App() {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation(); // Get current route location
   const isLoginPage = location.pathname === "/login";
   const token = JSON.parse(localStorage.getItem("token"));
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Header */}
@@ -36,7 +66,7 @@ function App() {
           <div className="px-4">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center space-x-4">
-                <Menu
+                <MenuIcon
                   className="h-6 w-6 cursor-pointer"
                   onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 />
@@ -45,14 +75,46 @@ function App() {
               <div className="flex items-center space-x-6">
                 {/* <Globe2 className="h-5 w-5 cursor-pointer" /> */}
                 <Bell className="h-5 w-5 cursor-pointer" />
-                <div className="flex items-center space-x-3">
-                  <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
-                    <span className="text-sm font-medium">JS</span>
-                  </div>
-                  <div className="hidden md:block">
-                    <div className="text-sm font-medium">John Smith</div>
-                    <div className="text-xs text-gray-300">Student</div>
-                  </div>
+
+                <div>
+                  <Button
+                    id="fade-button"
+                    aria-controls={open ? "fade-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? "true" : undefined}
+                    onClick={handleClick}
+                  >
+                    <div className="flex items-center space-x-3 text-white">
+                      <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
+                        <span className="text-sm font-medium">JS</span>
+                      </div>
+                      <div className="hidden md:block">
+                        <div className="text-sm font-medium">John Smith</div>
+                        <div className="text-xs text-gray-300">Student</div>
+                      </div>
+                    </div>
+                  </Button>
+                  <Menu
+                    id="fade-menu"
+                    MenuListProps={{
+                      "aria-labelledby": "fade-button",
+                    }}
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    TransitionComponent={Fade}
+                  >
+                    <MenuItem onClick={handleClose}>Profile</MenuItem>
+                    <MenuItem onClick={handleClose}>My account</MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleLogout();
+                        handleClose();
+                      }}
+                    >
+                      Logout
+                    </MenuItem>
+                  </Menu>
                 </div>
               </div>
             </div>
@@ -132,7 +194,40 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/update-department/:departmentId"
+              element={
+                <ProtectedRoute>
+                  <UpdateDepartment />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/create-group"
+              element={
+                <ProtectedRoute>
+                  <CreateGroup />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/list-group"
+              element={
+                <ProtectedRoute>
+                  <ListGroup />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/update-group/:groupId"
+              element={
+                <ProtectedRoute>
+                  <UpdateGroup />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
+          <Toaster />
         </main>
       </div>
     </div>

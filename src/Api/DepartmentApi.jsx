@@ -26,28 +26,22 @@ export const CreateDepartmentApi = async (departmentDate) => {
 export const DeleteDepartment = async (departmentId) => {
   const Department = await axiosInstance.delete(
     `${API_URL}/department-delete/${departmentId}`
-    // {
-    //   method: "DELETE",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${token.access_token}`
-    //   },
-    // }
   );
   return Department.data;
 };
 
-// export const detailFaculty = async (facultyId) => {
-//   const faculty = await axios.get(`${API_URL}/faculty-get/${facultyId}`, {});
-//   return faculty.data;
-// };
+export const detailDepartment = async (departmentId) => {
+  const department = await axiosInstance.get(`${API_URL}/department-get/${departmentId}`, {});
+  return department.data;
+};
 
-// export const UpdateFacultyApi = async (facultyDate) => {
-//   const response = await axios.put(
-//     `${API_URL}/faculty-update/${facultyDate?.facultyId}`,
-//     {
-//       name: facultyDate.name,
-//     }
-//   );
-//   return response.data;
-// };
+export const UpdateDepartmentApi = async (departmentDate) => {
+  const response = await axiosInstance.put(
+    `${API_URL}/department-update/${departmentDate?.departmentId}`,
+    {
+      name: departmentDate.name,
+      faculty_id: departmentDate.facultyId,
+    }
+  );
+  return response.data;
+};

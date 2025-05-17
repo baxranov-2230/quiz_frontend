@@ -37,7 +37,10 @@ export const DeleteFaculty = async (facultyId) => {
 };
 
 export const detailFaculty = async (facultyId) => {
-  const faculty = await axiosInstance.get(`${API_URL}/faculty-get/${facultyId}`, {});
+  const faculty = await axiosInstance.get(
+    `${API_URL}/faculty-get/${facultyId}`,
+    {}
+  );
   return faculty.data;
 };
 

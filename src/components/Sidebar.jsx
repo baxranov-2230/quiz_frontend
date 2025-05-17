@@ -55,6 +55,14 @@ function Sidebar({ isOpen }) {
         {icon: CiViewList, label: "Hamma kafedralar", path: "/list-department"},
       ],
     },
+    {
+      id: "group",
+      title: "Group",
+      items: [
+        {icon: RiFolderAddLine, label: "Group qo'shish", path: "/create-group"},
+        {icon: CiViewList, label: "Hamma guruhlar", path: "/list-group"},
+      ],
+    },
     // {
     //   id: "academic",
     //   title: "O'quv jarayoni",

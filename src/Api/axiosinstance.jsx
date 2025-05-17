@@ -27,30 +27,26 @@ export const isTokenExpiredRefesh = (token) => {
   return decoded.exp < currentTime;
 };
 
+
 axiosInstance.interceptors.request.use(async (config) => {
   const token = JSON.parse(localStorage.getItem("token"));
-  console.log(token);
-  //   if (
-  //     token &&
-  //     token.access_token &&
-  //     !isTokenExpiredRefesh(token.refresh_token)
-  //   )
-  //   {
-  if (token && token.access_token && !isTokenExpired(token.access_token)) {
-    // const newAccessToken = await refreshAccessToken(token.refresh_token);
-    // config.headers.Authorization = `Bearer ${newAccessToken}`;
+  if (
+    token &&
+    token.access_token &&
+    !isTokenExpiredRefesh(token.refresh_token)
+  ) {
+    if (isTokenExpired(token.access_token)) {
+      const newAccessToken = await refreshAccessToken(token.refresh_token);
+      config.headers.Authorization = `Bearer ${newAccessToken}`;
+    } else {
+      config.headers.Authorization = `Bearer ${token.access_token}`;
+    }
   } else {
+    toast.error("Token davri tugadi");
     await logout();
     window.location.href = "/login";
-    config.headers.Authorization = `Bearer ${token.access_token}`;
+    return config;
   }
-  //   }
-  //   else {
-  //     toast.error("Token davri tugadi");
-  //     await logout();
-  //     window.location.href = "/login";
-  //     return config;
-  //   }
 
   return config;
 }, Promise.reject);

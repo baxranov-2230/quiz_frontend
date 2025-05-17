@@ -6,7 +6,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {detailFaculty, UpdateFacultyApi} from "../../Api/FacultyApi.jsx";
 
-function UpdateFaculty(effect, deps) {
+function UpdateFaculty() {
     const {facultyId} = useParams();
     const navigate = useNavigate();
     const {data} = useQuery({
